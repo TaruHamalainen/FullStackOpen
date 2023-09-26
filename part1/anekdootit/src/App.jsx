@@ -18,14 +18,12 @@ const App = () => {
 
   const [selected, setSelected] = useState(0);
   const [votes, setVotes] = useState(Array(anecdotes.length).fill(0));
-  console.log(votes);
 
   const handleNextClick = () => {
     setSelected(Math.floor(Math.random() * anecdotes.length));
   };
 
   const handleVoteClick = () => {
-    console.log("voted anekdote ", selected);
     const votesCopy = [...votes];
     votesCopy[selected] += 1;
     setVotes(votesCopy);
