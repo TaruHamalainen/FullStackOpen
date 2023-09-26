@@ -31,6 +31,17 @@ const App = () => {
     setVotes(votesCopy);
   };
 
+  const gethighestVote = () => {
+    let max = votes[0];
+    for (let i = 0; i < votes.length; i++) {
+      if (votes[i] > max) {
+        max = votes[i];
+      }
+    }
+
+    return max;
+  };
+
   return (
     <>
       <div>
@@ -48,7 +59,7 @@ const App = () => {
         ) : (
           <div>
             {anecdotes[votes.indexOf(Math.max(...votes))]}
-            <p>has {votes[selected]} votes</p>
+            <p>has {gethighestVote()} votes</p>
           </div>
         )}
       </div>
