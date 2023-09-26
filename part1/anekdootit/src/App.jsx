@@ -36,6 +36,7 @@ const App = () => {
       <div>
         <h1>Anecdote of the day</h1>
         {anecdotes[selected]}
+        <p>has {votes[selected]} votes</p>
       </div>
       <Button text="Vote" handleClick={handleVoteClick} />
       <Button text="Next Anecdote" handleClick={handleNextClick} />
@@ -45,7 +46,10 @@ const App = () => {
         {votes.every((vote) => vote === 0) ? (
           <p>No votes </p>
         ) : (
-          <div>{anecdotes[votes.indexOf(Math.max(...votes))]}</div>
+          <div>
+            {anecdotes[votes.indexOf(Math.max(...votes))]}
+            <p>has {votes[selected]} votes</p>
+          </div>
         )}
       </div>
     </>
