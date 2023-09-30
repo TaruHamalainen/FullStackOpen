@@ -38,7 +38,22 @@ const App = () => {
         setPersons(persons.concat(response.data));
       });
     } else {
-      alert(`${person.name} has already added to phonebook`);
+      if (
+        window.confirm(
+          `${person.name} is already added to phonebook, replace old number with new one (${person.number})?`
+        )
+      ) {
+        const personToChange = persons.find((p) => p.name === person.name);
+        const changedPerson = { ...personToChange, number: person.number };
+
+        server.update(personToChange.id, person).then((response) => {
+          setPersons(
+            persons.map((p) => (p.id !== personToChange.id ? p : response.data))
+          );
+        });
+      } else {
+        console.log("Not confirmed");
+      }
     }
 
     setNewName("");
@@ -59,6 +74,14 @@ const App = () => {
 
   const handleFilterClick = () => {
     setFilter(!filter);
+  };
+
+  const handleDelete = (id, name) => {
+    if (window.confirm(`Delete${name} from phonebook?`)) {
+      server.remove(id);
+      const newPersonsList = persons.filter((person) => person.id !== id);
+      setPersons(newPersonsList);
+    }
   };
 
   return (
@@ -87,6 +110,7 @@ const App = () => {
         persons={persons}
         nameToFilter={nameToFilter}
         namesToFind={namesToFind}
+        handleClick={handleDelete}
       />
     </div>
   );
