@@ -14,6 +14,7 @@ const NewPersonForm = ({
           id="name"
           value={newName}
           onChange={onNameChange}
+          required
         />
       </div>
       <div>
@@ -23,6 +24,7 @@ const NewPersonForm = ({
           id="number"
           value={newNumber}
           onChange={onNumberChange}
+          required
         />
       </div>
       <div>

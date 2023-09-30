@@ -1,19 +1,21 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Filter from "./components/filter";
 import NewPersonForm from "./components/newPersonForm";
 import Persons from "./components/persons";
+import server from "./services/server";
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: "Arto Hellas", number: "040-123456" },
-    { name: "Ada Lovelace", number: "39-44-5323523" },
-    { name: "Dan Abramov", number: "12-43-234345" },
-    { name: "Mary Poppendieck", number: "39-23-6423122" },
-  ]);
+  const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [nameToFilter, setNameToFilter] = useState("");
   const [filter, setFilter] = useState(false);
+
+  useEffect(() => {
+    server.getAll().then((response) => {
+      setPersons(response.data);
+    });
+  }, []);
 
   const namesToFind = persons.filter((person) =>
     person.name.toLowerCase().includes(nameToFilter.toLowerCase())
@@ -27,9 +29,18 @@ const App = () => {
       number: newNumber,
     };
 
-    persons.map((person) => person.name).includes(person.name)
-      ? alert(`${person.name} is already added to phonebook`)
-      : setPersons(persons.concat(person));
+    const existingPerson = persons
+      .map((person) => person.name)
+      .includes(person.name);
+
+    if (!existingPerson) {
+      server.add(person).then((response) => {
+        setPersons(persons.concat(response.data));
+      });
+    } else {
+      alert(`${person.name} has already added to phonebook`);
+    }
+
     setNewName("");
     setNewNumber("");
   };
