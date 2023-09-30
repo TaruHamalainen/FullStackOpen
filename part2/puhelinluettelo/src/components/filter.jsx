@@ -1,8 +1,20 @@
-const Filter = ({ nameToFilter, onChange }) => {
+const Filter = ({ nameToFilter, onChange, filter, click }) => {
   return (
     <div>
-      <label>Filter shown with:</label>
-      <input value={nameToFilter} onChange={onChange} />
+      {filter ? (
+        <div>
+          <label htmlFor="filter">Filter: </label>
+          <input
+            autoComplete="off"
+            id="filter"
+            value={nameToFilter}
+            onChange={onChange}
+          />
+          <button onClick={click}>close filter</button>
+        </div>
+      ) : (
+        <button onClick={click}>Open filter</button>
+      )}
     </div>
   );
 };

@@ -8,12 +8,22 @@ const NewPersonForm = ({
   return (
     <form onSubmit={onSubmit}>
       <div>
-        <label>Name: </label>
-        <input value={newName} onChange={onNameChange} />
+        <label htmlFor="name">Name: </label>
+        <input
+          autoComplete="off"
+          id="name"
+          value={newName}
+          onChange={onNameChange}
+        />
       </div>
       <div>
-        <label>Number: </label>
-        <input value={newNumber} onChange={onNumberChange} />
+        <label htmlFor="number">Number: </label>
+        <input
+          autoComplete="off"
+          id="number"
+          value={newNumber}
+          onChange={onNumberChange}
+        />
       </div>
       <div>
         <button type="submit">add</button>
