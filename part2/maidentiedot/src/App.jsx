@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import APIKEY from "./config.js"; // getting API key from config file
 
 const App = () => {
   const [allCountries, setAllCountries] = useState([]);
@@ -29,15 +30,21 @@ const App = () => {
         value={filter}
         onChange={(e) => setFilter(e.target.value)}
       />
-      <Display countries={countriesToShow} />
+      <Display
+        countries={countriesToShow}
+        onSelectCountry={(name) => setFilter(name)}
+      />
     </>
   );
 };
 
-const Display = ({ countries }) => {
+// Display component
+const Display = ({ countries, onSelectCountry }) => {
   // More than one country but less than 10 countries
   if (countries.length <= 10 && countries.length > 1) {
-    return <CountriesList countries={countries} />;
+    return (
+      <CountriesList countries={countries} onSelectCountry={onSelectCountry} />
+    );
 
     // more than 10 countries
   } else if (countries.length > 10) {
@@ -54,23 +61,40 @@ const Display = ({ countries }) => {
 };
 
 // List of filtered countries
-const CountriesList = ({ countries }) => {
+const CountriesList = ({ countries, onSelectCountry }) => {
   return (
     <ul>
       {countries.map((country) => (
-        <CountrySimple key={country.name.common} country={country} />
+        <li key={country.name.common}>
+          {country.name.common}{" "}
+          <button onClick={() => onSelectCountry(country.name.common)}>
+            Show
+          </button>
+        </li>
       ))}
     </ul>
   );
 };
 
-// country with name and show button
-const CountrySimple = ({ country }) => {
-  return <li>{country.name.common}</li>;
-};
-
 // details of country
 const CountryDetails = ({ country }) => {
+  const [weather, setWeather] = useState([]);
+  // Getting weather from API
+  const getWeather = () => {
+    axios
+      .get("https://api.openweathermap.org/data/2.5/weather", {
+        params: {
+          appid: APIKEY,
+          lat: country.capitalInfo.latlng[0],
+          lon: country.capitalInfo.latlng[1],
+          units: "metric",
+        },
+      })
+      .then((res) => setWeather(res.data));
+  };
+
+  useEffect(getWeather, [country.capitalInfo.latlng]);
+
   return (
     <div>
       <h1>{country.name.common}</h1>
@@ -82,6 +106,19 @@ const CountryDetails = ({ country }) => {
         ))}
       </ul>
       <img src={country.flags.png} alt={country.flags.alt} />
+      {weather.length === 0 ? null : (
+        <div>
+          <h2>Weather in {country.capital}</h2>
+          <p>Temperature {weather.main.temp} Celsius </p>
+
+          <img
+            src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`}
+            alt={weather.weather[0].description}
+            title={weather.weather[0].description}
+          />
+          <p>wind {weather.wind.speed} m/s</p>
+        </div>
+      )}
     </div>
   );
 };
