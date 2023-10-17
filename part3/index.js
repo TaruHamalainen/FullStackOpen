@@ -1,8 +1,22 @@
-import express, { response } from "express";
+import express from "express";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
+import morgan from "morgan";
 
 const app = express();
+
+// morgan
+morgan("tiny");
+morgan.token("showData", function (req) {
+  return JSON.stringify(req.body);
+});
+
+app.use(
+  morgan(
+    ":method :url :status :res[content-length] - :response-time ms | :showData"
+  )
+);
+
 app.use(express.json());
 
 let persons = [
@@ -87,6 +101,7 @@ app.post("/api/persons", (req, res) => {
   res.json(person);
 });
 
+// listen to port
 const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`Server running at port ${PORT}`);
